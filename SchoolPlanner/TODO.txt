@@ -1,0 +1,4 @@
+﻿1. finish listing all items with scaffold
+2. make planner
+3. add data validation (for create, delete and stuff)
+4. make it pretty, add proper data annotations
