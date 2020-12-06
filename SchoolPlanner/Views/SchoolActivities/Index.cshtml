@@ -1,12 +1,31 @@
-﻿@model IEnumerable<SchoolPlanner.Models.SchoolActivity>
+﻿@model SchoolPlanner.Models.PlannerData
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Planner";
 }
 
-<h1>Index</h1>
+<br />
+<div class="container row p-0 m-0">
+    <div class="col-6">
+        <h2 class="text-info">Room:</h2>
+    </div>
+    <div class="col-12 dropdown show">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </a>
 
-<p>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+         @foreach (var item in Model.Rooms)
+         {
+             <a class="dropdown-item" href="#">@item.RoomNumber</a>
+         }
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+    <script src="~/js/DropDown.js"></script>
+}
+@*<p>
     <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
@@ -56,4 +75,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table>*@

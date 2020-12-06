@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using SchoolPlanner.Models;
 
@@ -21,7 +22,17 @@ namespace SchoolPlanner.Controllers
         // GET: SchoolActivities
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SchoolActivity.ToListAsync());
+            var viewModel = new PlannerData();
+            viewModel.Rooms = await _context.Room.ToListAsync();
+            if (viewModel.Rooms.Count() >= 1)
+            {
+                string currentRoom = viewModel.Rooms.First().RoomNumber.ToString();
+                viewModel.SchoolActivities = await _context.SchoolActivity.Where(
+                    i => i.Room == currentRoom).ToListAsync();
+                return View(viewModel);
+            }
+
+            return Redirect("Room/Index");            
         }
 
         // GET: SchoolActivities/Details/5
@@ -147,6 +158,12 @@ namespace SchoolPlanner.Controllers
         private bool SchoolActivityExists(int id)
         {
             return _context.SchoolActivity.Any(e => e.Id == id);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllRooms()
+        {
+            return Json(new { data = await _context.Room.ToListAsync() });
         }
     }
 }
