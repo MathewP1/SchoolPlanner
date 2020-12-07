@@ -20,19 +20,19 @@ namespace SchoolPlanner.Controllers
         }
 
         // GET: SchoolActivities
+        // this is called by default
+        // TODO: I think I'm gonna need this id later
         public async Task<IActionResult> Index()
         {
-            var viewModel = new PlannerData();
-            viewModel.Rooms = await _context.Room.ToListAsync();
-            if (viewModel.Rooms.Count() >= 1)
+            // if no rooms redirect to adding rooms
+            if (_context.Room.Count() == 0)
             {
-                string currentRoom = viewModel.Rooms.First().RoomNumber.ToString();
-                viewModel.SchoolActivities = await _context.SchoolActivity.Where(
-                    i => i.Room == currentRoom).ToListAsync();
-                return View(viewModel);
+                return Redirect("Rooms");
             }
-
-            return Redirect("Room/Index");            
+            PlannerData viewModel = new PlannerData();
+            viewModel.currentRoom = _context.Room.FirstOrDefault().RoomNumber.ToString();
+            viewModel.Rooms = await _context.Room.ToListAsync();
+            return View(viewModel);
         }
 
         // GET: SchoolActivities/Details/5
@@ -54,8 +54,9 @@ namespace SchoolPlanner.Controllers
         }
 
         // GET: SchoolActivities/Create
-        public IActionResult Create()
+        public IActionResult Create(int? id)
         {
+            ViewData["defaultSlot"] = id;
             return View();
         }
 
@@ -64,8 +65,9 @@ namespace SchoolPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Room,Group,Class,Slot,Teacher")] SchoolActivity schoolActivity)
+        public async Task<IActionResult> Create([Bind("Room,Group,Class,Slot,Teacher")] SchoolActivity schoolActivity)
         {
+            Console.Write(schoolActivity.Id);
             if (ModelState.IsValid)
             {
                 _context.Add(schoolActivity);
@@ -76,6 +78,7 @@ namespace SchoolPlanner.Controllers
         }
 
         // GET: SchoolActivities/Edit/5
+        // not actual id but slot
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -83,7 +86,8 @@ namespace SchoolPlanner.Controllers
                 return NotFound();
             }
 
-            var schoolActivity = await _context.SchoolActivity.FindAsync(id);
+            //var schoolActivity = await _context.SchoolActivity.FindAsync(id);
+            var schoolActivity = await _context.SchoolActivity.Where(i => i.Slot == id).FirstOrDefaultAsync();
             if (schoolActivity == null)
             {
                 return NotFound();
@@ -161,9 +165,24 @@ namespace SchoolPlanner.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllRooms()
+        public async Task<IActionResult> GetActivities(string id)
         {
-            return Json(new { data = await _context.Room.ToListAsync() });
+            return Json(new
+            {
+                activities = await _context.SchoolActivity.Where(i => i.Room == id).ToListAsync()
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetData()
+        {
+            return Json(new
+            {
+                rooms = await _context.Room.ToListAsync(),
+                teachers = await _context.Teacher.ToListAsync(),
+                classes = await _context.Class.ToListAsync(),
+                groups = await _context.Group.ToListAsync()
+            });
         }
     }
 }

@@ -8,7 +8,7 @@ namespace SchoolPlanner.Models
 {
     public class PlannerData
     {
-        public IEnumerable<SchoolActivity> SchoolActivities;
         public IEnumerable<Room> Rooms;
+        public string currentRoom;
     }
 }
