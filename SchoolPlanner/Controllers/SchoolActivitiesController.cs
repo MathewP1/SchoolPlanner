@@ -22,7 +22,7 @@ namespace SchoolPlanner.Controllers
         // GET: SchoolActivities
         // this is called by default
         // TODO: I think I'm gonna need this id later
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? id)
         {
             // if no rooms redirect to adding rooms
             if (_context.Room.Count() == 0)
@@ -30,7 +30,14 @@ namespace SchoolPlanner.Controllers
                 return Redirect("Rooms");
             }
             PlannerData viewModel = new PlannerData();
-            viewModel.currentRoom = _context.Room.FirstOrDefault().RoomNumber.ToString();
+            if (id == null)
+            {
+                viewModel.currentRoom = _context.Room.FirstOrDefault().RoomNumber.ToString();
+            }
+            else
+            {
+                viewModel.currentRoom = _context.Room.Where(i => i.RoomNumber == id).FirstOrDefault().RoomNumber.ToString();
+            }
             viewModel.Rooms = await _context.Room.ToListAsync();
             return View(viewModel);
         }
@@ -64,10 +71,8 @@ namespace SchoolPlanner.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Room,Group,Class,Slot,Teacher")] SchoolActivity schoolActivity)
         {
-            Console.Write(schoolActivity.Id);
             if (ModelState.IsValid)
             {
                 _context.Add(schoolActivity);
@@ -78,7 +83,6 @@ namespace SchoolPlanner.Controllers
         }
 
         // GET: SchoolActivities/Edit/5
-        // not actual id but slot
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,7 +91,7 @@ namespace SchoolPlanner.Controllers
             }
 
             //var schoolActivity = await _context.SchoolActivity.FindAsync(id);
-            var schoolActivity = await _context.SchoolActivity.Where(i => i.Slot == id).FirstOrDefaultAsync();
+            var schoolActivity = await _context.SchoolActivity.Where(i => i.Id == id).FirstOrDefaultAsync();
             if (schoolActivity == null)
             {
                 return NotFound();
@@ -150,13 +154,12 @@ namespace SchoolPlanner.Controllers
 
         // POST: SchoolActivities/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<string> DeleteConfirmed(int id)
         {
             var schoolActivity = await _context.SchoolActivity.FindAsync(id);
             _context.SchoolActivity.Remove(schoolActivity);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return "/SchoolActivities/Index/";
         }
 
         private bool SchoolActivityExists(int id)

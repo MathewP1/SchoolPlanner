@@ -1,6 +1,6 @@
 ﻿window.onload = function () {
     var baseUrl = window.location.origin;
-    $.get(baseUrl +"/SchoolActivities/GetData", function (response, status) {
+    $.get(baseUrl + "/SchoolActivities/GetData", function (response, status) {
         // clear rooms here
         response["rooms"].forEach(function (element, index, array) {
             if (element["roomNumber"] != $("#inputRoom option:selected").text()) {
@@ -23,7 +23,9 @@
             }
         });
 
-        var i = Math.floor((parseInt($("#inputSlot option:selected").text())-1) / 5);
+        var slot = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+        console.log(slot);
+        var i = Math.floor(slot / 5);
         var time;
         switch (i) {
             case 0:
@@ -54,19 +56,13 @@
                 time = "15:20-16:05";
                 break;
         }
-        $("#inputSlot option:selected").text(time);
+        $("#inputSlot").append($('<option>').text(time));
     });
 
-    $("select").change(function () {
-        $("#button_delete").remove();
-    })
-    var id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
-    $("#button_delete").click(function () {
-        $.post(baseUrl + "/SchoolActivities/Delete/" + id, { id: id }, function (result) {
-            window.location.replace(baseUrl + result + parseInt($("#inputRoom").text(), 10));
-        });
+    $("button_save").click(function () {
+
     });
 
-    
+
 };
 

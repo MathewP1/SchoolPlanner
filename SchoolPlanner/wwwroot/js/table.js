@@ -6,11 +6,12 @@
 });
 
 $("td").click(function () {
+    var baseUrl = window.location.origin;
     var content = $(this).text();
     if (content == "") {
-        window.location.href = "SchoolActivities/Create/" + $(this).attr('id');
+        window.location.replace(baseUrl + "/SchoolActivities/Create/" + $(this).attr('id'));
     } else {
-        window.location.href = "SchoolActivities/Edit/" + $(this).attr('id');
+        window.location.replace(baseUrl + "/SchoolActivities/Edit/" + $(this).data('id'));
     }
 })
 
@@ -22,7 +23,8 @@ window.onload = function () {
 
 
 function GetActivities(roomNumber) {
-    $.get("SchoolActivities/GetActivities/" + roomNumber, function (response, status) {
+    var baseUrl = window.location.origin;
+    $.get(baseUrl + "/SchoolActivities/GetActivities/" + roomNumber, function (response, status) {
         if (!response["activities"][0]) {
             return;
         } else {
@@ -34,6 +36,7 @@ function GetActivities(roomNumber) {
 function loadTable(data) {
     data.forEach(function (element, index, array) {
         var slot = element["slot"];
+        $("#".concat(slot)).data("id", element["id"]);
         $("#".concat(slot)).text(element["group"] + " " + element["class"] + " " + element["teacher"]);
     })
 }

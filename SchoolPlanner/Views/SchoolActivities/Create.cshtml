@@ -4,50 +4,59 @@
     ViewData["Title"] = "Create";
 }
 
+@section Styles {
+    <link href="@Url.Content("~/css/editStyle.css")" rel="stylesheet" type="text/css" />
+}
+@section Scripts {
+    <script src="@Url.Content("~/js/actCreate.js")" type="text/javascript"></script>
+}
+
 <h1>Create</h1>
 
 <h4>SchoolActivity</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Room" class="control-label"></label>
-                <input asp-for="Room" class="form-control" />
-                <span asp-validation-for="Room" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Group" class="control-label"></label>
-                <input asp-for="Group" class="form-control" />
-                <span asp-validation-for="Group" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Class" class="control-label"></label>
-                <input asp-for="Class" class="form-control" />
-                <span asp-validation-for="Class" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Slot" class="control-label"></label>
-                <input asp-for="Slot" class="form-control" value="@Html.ViewData["defaultSlot"]" />
-                <span asp-validation-for="Slot" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Teacher" class="control-label"></label>
-                <input asp-for="Teacher" class="form-control" />
-                <span asp-validation-for="Teacher" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text" for="inputRoom">Select Room</label>
     </div>
+    <select class="custom-select" id="inputRoom">
+    </select>
 </div>
 
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroup">Select Group</label>
+    </div>
+    <select class="custom-select" id="inputGroup">
+    </select>
+</div>
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text" for="inputClass">Select Class</label>
+    </div>
+    <select class="custom-select" id="inputClass">
+    </select>
+</div>
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text" for="inputSlot">Select Slot</label>
+    </div>
+    <select class="custom-select" id="inputSlot" disabled>
+    </select>
+</div>
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text" for="inputTeacher">Select Teacher</label>
+    </div>
+    <select class="custom-select" id="inputTeacher">
+    </select>
+</div>
+
+<button id="button_save" type="button" class="btn btn-primary btn-lg btn-block">Add Activity</button>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
